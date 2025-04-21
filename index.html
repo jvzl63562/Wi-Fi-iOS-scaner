@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Scanner - iOS</title>
+    <style>
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #5ac8fa;
+            --background-color: #f2f2f7;
+            --card-color: #ffffff;
+            --text-color: #000000;
+            --text-secondary: #8e8e93;
+            --danger-color: #ff3b30;
+            --success-color: #34c759;
+            --warning-color: #ffcc00;
+            --border-radius: 10px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0 15px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin: 20px 0 10px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .intro-card {
+            margin-top: 20px;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0062cc;
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e6;
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d0d0d6;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #e0352b;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d1d6;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: #fff;
+        }
+
+        .network-list {
+            list-style: none;
+        }
+
+        .network-item {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .network-item:last-child {
+            border-bottom: none;
+        }
+
+        .network-name {
+            font-weight: 600;
+        }
+
+        .network-details {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .signal-strength {
+            display: flex;
+            align-items: center;
+        }
+
+        .signal-bar {
+            width: 5px;
+            margin-right: 2px;
+            background-color: var(--primary-color);
+            border-radius: 1px;
+        }
+
+        .bar-1 { height: 5px; }
+        .bar-2 { height: 10px; }
+        .bar-3 { height: 15px; }
+        .bar-4 { height: 20px; }
+
+        .tab-container {
+            margin-top: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .step {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e6;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: 600;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-content {
+            padding-left: 40px;
+        }
+
+        .app-recommendation {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .app-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .app-info {
+            flex: 1;
+        }
+
+        .app-name {
+            font-weight: 600;
+        }
+
+        .app-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .qr-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #qrcode {
+            margin: 0 auto;
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        .saved-networks {
+            margin-top: 20px;
+        }
+
+        .warning {
+            background-color: rgba(255, 204, 0, 0.1);
+            border-left: 4px solid var(--warning-color);
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-color);
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                width: auto;
+                min-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>WiFi Scanner</h1>
+            <div class="subtitle">Versão para iOS</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card intro-card">
+            <h2>Bem-vindo ao WiFi Scanner para iOS</h2>
+            <p>Esta ferramenta foi desenvolvida para ajudar você a gerenciar redes Wi-Fi em dispositivos iOS.</p>
+            <p>Devido às restrições de segurança do iOS, algumas funcionalidades são limitadas em aplicações web, mas criamos uma solução alternativa eficiente.</p>
+        </div>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" onclick="openTab('scan')">Escanear</div>
+                <div class="tab" onclick="openTab('guide')">Guia</div>
+                <div class="tab" onclick="openTab('saved')">Redes Salvas</div>
+                <div class="tab" onclick="openTab('qrcode')">QR Code</div>
+            </div>
+
+            <div id="scan" class="tab-content active">
+                <div class="card">
+                    <h2>Escanear Redes Wi-Fi</h2>
+                    <p>Para escanear redes Wi-Fi disponíveis, você precisará usar recursos nativos do iOS ou aplicativos recomendados.</p>
+                    
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">1</span>
+                            Usando recursos nativos do iOS
+                        </div>
+                        <div class="step-content">
+                            <p>Abra as Configurações do iOS e toque em "Wi-Fi" para ver as redes disponíveis.</p>
+                            <button class="btn" onclick="openSettings()">Abrir Configurações Wi-Fi</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">2</span>
+                            Aplicativos recomendados
+                        </div>
+                        <div class="step-content">
+                            <p>Para análise mais detalhada, recomendamos estes aplicativos:</p>
+                            
+                            <div class="app-recommendation">
+                                <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/64/7a/7a/647a7a7f-8ee3-3be4-6c0e-fd2810b281b1/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/230x0w.webp" alt="Fing" class="app-icon">
+                                <div class="app-info">
+                                    <div class="app-name">Fing - Network Scanner</div>
+                                    <div class="app-description">Escaneamento de rede e descoberta de dispositivos</div>
+                                    <a href="https://apps.apple.com/us/app/fing-network-scanner/id430921107" class="btn" target="_blank">Baixar na App Store</a>
+                                </div>
+                            </div>
+                            
+                            <div class="app-recommendation">
+                                <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple112/v4/78/d7/a9/78d7a940-b1b0-8101-1068-e9ca487de0f8/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/230x0w.webp" alt="WiFi Analyzer" class="app-icon">
+                                <div class="app-info">
+                                    <div class="app-name">WiFi Analyzer</div>
+                                    <div class="app-description">Análise detalhada de redes Wi-Fi</div>
+                                    <a href="https://apps.apple.com/us/app/wifi-analyzer-network-analyzer/id1602804552" class="btn" target="_blank">Baixar na App Store</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">3</span>
+                            Registrar redes encontradas
+                        </div>
+                        <div class="step-content">
+                            <p>Após encontrar as redes, você pode registrá-las aqui:</p>
+                            <div class="form-group">
+                                <label for="network-name">Nome da Rede (SSID):</label>
+                                <input type="text" id="network-name" placeholder="Digite o nome da rede">
+                            </div>
+                            <div class="form-group">
+                                <label for="network-security">Tipo de Segurança:</label>
+                                <select id="network-security">
+                                    <option value="WPA2">WPA2</option>
+                                    <option value="WPA3">WPA3</option>
+                                    <option value="WPA">WPA</option>
+                                    <option value="WEP">WEP</option>
+                                    <option value="Open">Aberta (Sem Senha)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="network-signal">Força do Sinal:</label>
+                                <select id="network-signal">
+                                    <option value="4">Excelente</option>
+                                    <option value="3">Bom</option>
+                                    <option value="2">Regular</option>
+                                    <option value="1">Fraco</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="network-notes">Observações:</label>
+                                <textarea id="network-notes" rows="3" placeholder="Adicione observações sobre esta rede"></textarea>
+                            </div>
+                            <button class="btn" onclick="addNetwork()">Adicionar Rede</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card saved-networks">
+                    <h2>Redes Registradas</h2>
+                    <ul class="network-list" id="registered-networks">
+                        <li class="network-item">
+                            <div>
+                                <div class="network-name">Nenhuma rede registrada</div>
+                                <div class="network-details">Adicione redes usando o formulário acima</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <button class="btn" onclick="sendNetworksToEmail()">Enviar Lista para E-mail</button>
+                </div>
+            </div>
+
+            <div id="guide" class="tab-content">
+                <div class="card">
+                    <h2>Guia de Uso</h2>
+                    
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">1</span>
+                            Como ver redes Wi-Fi disponíveis
+                        </div>
+                        <div class="step-content">
+                            <p>No iOS, você pode ver as redes Wi-Fi disponíveis através das Configurações:</p>
+                            <ol>
+                                <li>Abra o aplicativo "Configurações"</li>
+                                <li>Toque em "Wi-Fi"</li>
+                                <li>Certifique-se de que o Wi-Fi esteja ativado</li>
+                                <li>As redes disponíveis aparecerão na lista "REDES"</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">2</span>
+                            Como ver a senha de uma rede Wi-Fi salva (iOS 16+)
+                        </div>
+                        <div class="step-content">
+                            <p>A partir do iOS 16, você pode ver senhas de redes Wi-Fi salvas:</p>
+                            <ol>
+                                <li>Abra o aplicativo "Configurações"</li>
+                                <li>Toque em "Wi-Fi"</li>
+                                <li>Toque no ícone de informação (i) ao lado da rede conectada</li>
+                                <li>Toque em "Senha"</li>
+                                <li>Use Face ID, Touch ID ou digite sua senha para visualizar</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">3</span>
+                            Como compartilhar uma rede Wi-Fi (iOS 11+)
+                        </div>
+                        <div class="step-content">
+                            <p>Você pode compartilhar facilmente uma rede Wi-Fi com outros dispositivos Apple:</p>
+                            <ol>
+                                <li>Certifique-se de que ambos os dispositivos estejam desbloqueados</li>
+                                <li>O dispositivo receptor deve tentar se conectar à rede Wi-Fi</li>
+                                <li>Aproxime os dispositivos</li>
+                                <li>No seu iPhone, aparecerá uma notificação "Compartilhar Senha Wi-Fi"</li>
+                                <li>Toque em "Compartilhar" para enviar a senha</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">4</span>
+                            Como gerar um QR Code para sua rede Wi-Fi (iOS 18+)
+                        </div>
+                        <div class="step-content">
+                            <p>No iOS 18, você pode gerar QR Codes para suas redes Wi-Fi:</p>
+                            <ol>
+                                <li>Abra o aplicativo "Senhas"</li>
+                                <li>Toque na opção "Wi-Fi"</li>
+                                <li>Selecione a rede desejada</li>
+                                <li>Toque em "Mostrar QR Code da Rede"</li>
+                                <li>O QR Code será exibido e pode ser compartilhado</li>
+                            </ol>
+                            <p>Alternativamente, você pode usar a aba "QR Code" neste aplicativo para gerar códigos para qualquer rede.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Limitações no iOS</h2>
+                    <p>Devido às restrições de segurança do iOS, aplicações web não podem:</p>
+                    <ul>
+                        <li>Acessar diretamente informações sobre redes Wi-Fi disponíveis</li>
+                        <li>Recuperar senhas de redes salvas automaticamente</li>
+                        <li>Conectar-se automaticamente a redes Wi-Fi</li>
+                        <li>Realizar ataques de força bruta para descobrir senhas</li>
+                    </ul>
+                    <p>Estas limitações são medidas de segurança implementadas pela Apple para proteger a privacidade dos usuários.</p>
+                </div>
+            </div>
+
+            <div id="saved" class="tab-content">
+                <div class="card">
+                    <h2>Redes Wi-Fi Salvas</h2>
+                    <p>No iOS, você pode visualizar as redes Wi-Fi salvas através das Configurações.</p>
+                    
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">1</span>
+                            Visualizar redes salvas
+                        </div>
+                        <div class="step-content">
+                            <p>Para ver as redes Wi-Fi salvas no seu dispositivo:</p>
+                            <ol>
+                                <li>Abra o aplicativo "Configurações"</li>
+                                <li>Toque em "Wi-Fi"</li>
+                                <li>As redes salvas aparecerão na lista "REDES CONHECIDAS"</li>
+                            </ol>
+                            <button class="btn" onclick="openSettings()">Abrir Configurações Wi-Fi</button>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">2</span>
+                            Registrar redes salvas manualmente
+                        </div>
+                        <div class="step-content">
+                            <p>Você pode registrar suas redes salvas aqui para referência futura:</p>
+                            <div class="form-group">
+                                <label for="saved-network-name">Nome da Rede (SSID):</label>
+                                <input type="text" id="saved-network-name" placeholder="Digite o nome da rede">
+                            </div>
+                            <div class="form-group">
+                                <label for="saved-network-password">Senha (opcional):</label>
+                                <input type="password" id="saved-network-password" placeholder="Digite a senha da rede">
+                            </div>
+                            <div class="form-group">
+                                <label for="saved-network-notes">Observações:</label>
+                                <textarea id="saved-network-notes" rows="3" placeholder="Adicione observações sobre esta rede"></textarea>
+                            </div>
+                            <button class="btn" onclick="addSavedNetwork()">Adicionar Rede Salva</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card saved-networks">
+                    <h2>Redes Salvas Registradas</h2>
+                    <ul class="network-list" id="saved-networks-list">
+                        <li class="network-item">
+                            <div>
+                                <div class="network-name">Nenhuma rede registrada</div>
+                                <div class="network-details">Adicione redes usando o formulário acima</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <button class="btn" onclick="sendSavedNetworksToEmail()">Enviar Lista para E-mail</button>
+                    <button class="btn btn-danger" onclick="clearSavedNetworks()">Limpar Lista</button>
+                </div>
+            </div>
+
+            <div id="qrcode" class="tab-content">
+                <div class="card">
+                    <h2>Gerador de QR Code para Wi-Fi</h2>
+                    <p>Crie QR Codes para compartilhar facilmente suas redes Wi-Fi com outros dispositivos.</p>
+                    
+                    <div class="form-group">
+                        <label for="qr-network-name">Nome da Rede (SSID):</label>
+                        <input type="text" id="qr-network-name" placeholder="Digite o nome da rede">
+                    </div>
+                    <div class="form-group">
+                        <label for="qr-network-password">Senha:</label>
+                        <input type="password" id="qr-network-password" placeholder="Digite a senha da rede">
+                    </div>
+                    <div class="form-group">
+                        <label for="qr-network-type">Tipo de Segurança:</label>
+                        <select id="qr-network-type">
+                            <option value="WPA">WPA/WPA2/WPA3</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">Sem Senha</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="generateQRCode()">Gerar QR Code</button>
+                    
+                    <div class="qr-container">
+                        <div id="qrcode"></div>
+                        <p id="qr-instructions" style="display: none;">Escaneie este QR Code com a câmera de outro dispositivo para conectar-se à rede Wi-Fi.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Como usar QR Codes de Wi-Fi</h2>
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">1</span>
+                            Escaneando um QR Code
+                        </div>
+                        <div class="step-content">
+                            <p>Para escanear um QR Code de Wi-Fi:</p>
+                            <ol>
+                                <li>Abra o aplicativo "Câmera" no seu iPhone</li>
+                                <li>Aponte a câmera para o QR Code</li>
+                                <li>Uma notificação aparecerá</li>
+                                <li>Toque na notificação para conectar-se à rede</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">2</span>
+                            Compartilhando o QR Code
+                        </div>
+                        <div class="step-content">
+                            <p>Você pode compartilhar o QR Code gerado:</p>
+                            <ol>
+                                <li>Faça uma captura de tela do QR Code</li>
+                                <li>Compartilhe a imagem por mensagem, e-mail ou AirDrop</li>
+                                <li>O destinatário pode escanear o código com a câmera</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Enviar Informações por E-mail</h2>
+            <div class="form-group">
+                <label for="email-address">Seu E-mail:</label>
+                <input type="email" id="email-address" value="joaobxleal@icloud.com" placeholder="Digite seu e-mail">
+            </div>
+            <button class="btn" onclick="sendAllDataToEmail()">Enviar Todas as Informações</button>
+            
+            <div class="warning">
+                <strong>Nota:</strong> Esta ferramenta foi desenvolvida apenas para fins educacionais. Use apenas em redes que você possui ou tem permissão para testar.
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        WiFi Scanner para iOS - Versão 1.0 - Desenvolvido para fins educacionais
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode.js/lib/qrcode.min.js"></script>
+    <script>
+        // Variáveis para armazenar as redes
+        let registeredNetworks = [];
+        let savedNetworks = [];
+
+        // Função para abrir as configurações de Wi-Fi
+        function openSettings() {
+            // No iOS, podemos tentar abrir as configurações de Wi-Fi com este URL scheme
+            window.location.href = 'App-Prefs:root=WIFI';
+            
+            // Como alternativa, podemos mostrar instruções
+            setTimeout(function() {
+                alert('Se as configurações não abrirem automaticamente, vá para Configurações > Wi-Fi manualmente.');
+            }, 1000);
+        }
+
+        // Função para alternar entre as abas
+        function openTab(tabName) {
+            // Esconde todas as abas
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // Remove a classe active de todas as abas
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            // Mostra a aba selecionada
+            document.getElementById(tabName).classList.add('active');
+            
+            // Adiciona a classe active à aba clicada
+            const activeTab = document.querySelector(`.tab[onclick="openTab('${tabName}')"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+
+        // Função para adicionar uma rede
+        function addNetwork() {
+            const name = document.getElementById('network-name').value.trim();
+            const security = document.getElementById('network-security').value;
+            const signal = document.getElementById('network-signal').value;
+            const notes = document.getElementById('network-notes').value.trim();
+            
+            if (!name) {
+                alert('Por favor, digite o nome da rede.');
+                return;
+            }
+            
+            const network = {
+                name: name,
+                security: security,
+                signal: signal,
+                notes: notes,
+                date: new Date().toLocaleString()
+            };
+            
+            registeredNetworks.push(network);
+            updateNetworksList();
+            
+            // Limpa o formulário
+            document.getElementById('network-name').value = '';
+            document.getElementById('network-notes').value = '';
+            
+            alert('Rede adicionada com sucesso!');
+        }
+
+        // Função para atualizar a lista de redes
+        function updateNetworksList() {
+            const networksList = document.getElementById('registered-networks');
+            
+            if (registeredNetworks.length === 0) {
+                networksList.innerHTML = `
+                    <li class="network-item">
+                        <div>
+                            <div class="network-name">Nenhuma rede registrada</div>
+                            <div class="network-details">Adicione redes usando o formulário acima</div>
+                        </div>
+                    </li>
+                `;
+                return;
+            }
+            
+            networksList.innerHTML = '';
+            
+            registeredNetworks.forEach((network, index) => {
+                const signalBars = getSignalBars(network.signal);
+                
+                const networkItem = document.createElement('li');
+                networkItem.className = 'network-item';
+                networkItem.innerHTML = `
+                    <div>
+                        <div class="network-name">${network.name}</div>
+                        <div class="network-details">${network.security} | ${network.date}</div>
+                        <div class="network-details">${network.notes}</div>
+                    </div>
+                    <div class="signal-strength">
+                        ${signalBars}
+                    </div>
+                `;
+                
+                networksList.appendChild(networkItem);
+            });
+        }
+
+        // Função para gerar as barras de sinal
+        function getSignalBars(signal) {
+            let bars = '';
+            const signalValue = parseInt(signal);
+            
+            for (let i = 1; i <= 4; i++) {
+                if (i <= signalValue) {
+                    bars += `<div class="signal-bar bar-${i}"></div>`;
+                } else {
+                    bars += `<div class="signal-bar bar-${i}" style="background-color: #e0e0e6;"></div>`;
+                }
+            }
+            
+            return bars;
+        }
+
+        // Função para adicionar uma rede salva
+        function addSavedNetwork() {
+            const name = document.getElementById('saved-network-name').value.trim();
+            const password = document.getElementById('saved-network-password').value;
+            const notes = document.getElementById('saved-network-notes').value.trim();
+            
+            if (!name) {
+                alert('Por favor, digite o nome da rede.');
+                return;
+            }
+            
+            const network = {
+                name: name,
+                password: password,
+                notes: notes,
+                date: new Date().toLocaleString()
+            };
+            
+            savedNetworks.push(network);
+            updateSavedNetworksList();
+            
+            // Limpa o formulário
+            document.getElementById('saved-network-name').value = '';
+            document.getElementById('saved-network-password').value = '';
+            document.getElementById('saved-network-notes').value = '';
+            
+            alert('Rede salva adicionada com sucesso!');
+        }
+
+        // Função para atualizar a lista de redes salvas
+        function updateSavedNetworksList() {
+            const networksList = document.getElementById('saved-networks-list');
+            
+            if (savedNetworks.length === 0) {
+                networksList.innerHTML = `
+                    <li class="network-item">
+                        <div>
+                            <div class="network-name">Nenhuma rede registrada</div>
+                            <div class="network-details">Adicione redes usando o formulário acima</div>
+                        </div>
+                    </li>
+                `;
+                return;
+            }
+            
+            networksList.innerHTML = '';
+            
+            savedNetworks.forEach((network, index) => {
+                const networkItem = document.createElement('li');
+                networkItem.className = 'network-item';
+                networkItem.innerHTML = `
+                    <div>
+                        <div class="network-name">${network.name}</div>
+                        <div class="network-details">Senha: ${network.password ? '********' : 'Não fornecida'}</div>
+                        <div class="network-details">${network.notes}</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="showPassword(${index})">Ver Senha</button>
+                `;
+                
+                networksList.appendChild(networkItem);
+            });
+        }
+
+        // Função para mostrar a senha
+        function showPassword(index) {
+            if (index >= 0 && index < savedNetworks.length) {
+                const network = savedNetworks[index];
+                if (network.password) {
+                    alert(`Senha para ${network.name}: ${network.password}`);
+                } else {
+                    alert(`Nenhuma senha fornecida para ${network.name}.`);
+                }
+            }
+        }
+
+        // Função para limpar as redes salvas
+        function clearSavedNetworks() {
+            if (confirm('Tem certeza que deseja limpar todas as redes salvas?')) {
+                savedNetworks = [];
+                updateSavedNetworksList();
+            }
+        }
+
+        // Função para gerar QR Code
+        function generateQRCode() {
+            const ssid = document.getElementById('qr-network-name').value.trim();
+            const password = document.getElementById('qr-network-password').value;
+            const type = document.getElementById('qr-network-type').value;
+            
+            if (!ssid) {
+                alert('Por favor, digite o nome da rede.');
+                return;
+            }
+            
+            // Limpa o QR Code anterior
+            const qrcodeElement = document.getElementById('qrcode');
+            qrcodeElement.innerHTML = '';
+            
+            // Formato do QR Code para Wi-Fi
+            // WIFI:S:<SSID>;T:<WPA|WEP|nopass>;P:<password>;;
+            const qrData = `WIFI:S:${ssid};T:${type};P:${password};;`;
+            
+            // Gera o QR Code
+            QRCode.toCanvas(qrcodeElement, qrData, function (error) {
+                if (error) {
+                    alert('Erro ao gerar QR Code: ' + error);
+                } else {
+                    document.getElementById('qr-instructions').style.display = 'block';
+                }
+            });
+        }
+
+        // Função para enviar redes para e-mail
+        function sendNetworksToEmail() {
+            const email = document.getElementById('email-address').value.trim();
+            
+            if (!email) {
+                alert('Por favor, digite um endereço de e-mail válido.');
+                return;
+            }
+            
+            if (registeredNetworks.length === 0) {
+                alert('Nenhuma rede registrada para enviar.');
+                return;
+            }
+            
+            // Em um ambiente real, enviaríamos os dados para um servidor
+            // que processaria o envio do e-mail. Aqui, simulamos o processo.
+            
+            alert(`As informações das redes seriam enviadas para ${email}.\n\nEm um ambiente real, você receberia um e-mail com os detalhes das redes registradas.`);
+            
+            // Simulação de envio para joaobxleal@icloud.com
+            console.log('Enviando dados para:', email);
+            console.log('Redes registradas:', registeredNetworks);
+        }
+
+        // Função para enviar redes salvas para e-mail
+        function sendSavedNetworksToEmail() {
+            const email = document.getElementById('email-address').value.trim();
+            
+            if (!email) {
+                alert('Por favor, digite um endereço de e-mail válido.');
+                return;
+            }
+            
+            if (savedNetworks.length === 0) {
+                alert('Nenhuma rede salva para enviar.');
+                return;
+            }
+            
+            // Simulação de envio
+            alert(`As informações das redes salvas seriam enviadas para ${email}.\n\nEm um ambiente real, você receberia um e-mail com os detalhes das redes salvas.`);
+            
+            console.log('Enviando dados para:', email);
+            console.log('Redes salvas:', savedNetworks);
+        }
+
+        // Função para enviar todos os dados para e-mail
+        function sendAllDataToEmail() {
+            const email = document.getElementById('email-address').value.trim();
+            
+            if (!email) {
+                alert('Por favor, digite um endereço de e-mail válido.');
+                return;
+            }
+            
+            if (registeredNetworks.length === 0 && savedNetworks.length === 0) {
+                alert('Nenhuma rede registrada ou salva para enviar.');
+                return;
+            }
+            
+            // Simulação de envio
+            alert(`Todas as informações seriam enviadas para ${email}.\n\nEm um ambiente real, você receberia um e-mail com os detalhes de todas as redes.`);
+            
+            console.log('Enviando todos os dados para:', email);
+            console.log('Redes registradas:', registeredNetworks);
+            console.log('Redes salvas:', savedNetworks);
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preenche o e-mail padrão
+            document.getElementById('email-address').value = 'joaobxleal@icloud.com';
+            
+            // Atualiza as listas
+            updateNetworksList();
+            updateSavedNetworksList();
+        });
+    </script>
+</body>
+</html>
